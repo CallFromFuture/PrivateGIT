@@ -1,8 +1,4 @@
 #include "openGL.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
 
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode);
