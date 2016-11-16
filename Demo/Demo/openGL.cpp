@@ -38,20 +38,20 @@ int main() {
 	ifstream in1, in2,in3;
 	//read vss.vert/fss.frag to vertexShaderSource/fragmentShaderSource
 	in1.open("vss.vert");
-	istreambuf_iterator<char> beg1(in1), end1;
-	string vss(beg1, end1);
+	istreambuf_iterator<char> beg1(in1), end;
+	string vss(beg1, end);
 	vertexShaderSource = vss.c_str();
 	in1.close();
 
 	in2.open("fss.frag");
-	istreambuf_iterator<char> beg2(in2), end2;
-	string fss(beg2, end2);
+	istreambuf_iterator<char> beg2(in2);
+	string fss(beg2, end);
 	fragmentShaderSource = fss.c_str();
 	in2.close();
 
 	in3.open("fss2.frag");
-	istreambuf_iterator<char> beg3(in3), end3;
-	string fss2(beg3, end3);
+	istreambuf_iterator<char> beg3(in3);
+	string fss2(beg3, end);
 	fragmentShaderSource2 = fss2.c_str();
 	in3.close();
 
@@ -148,24 +148,6 @@ int main() {
 	glEnableVertexAttribArray(0);
 	
 	glBindVertexArray(0);
-	//--------------------------
-	/*
-	glBindVertexArray(VAO[1]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-	*/
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-
 
 	//game loop
 	while (!glfwWindowShouldClose(window))
@@ -178,20 +160,17 @@ int main() {
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
 		glUseProgram(shaderProgram2);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(unsigned int)));
 		glEnableVertexAttribArray(0);
 
 		glBindVertexArray(0);
-		/*glBindVertexArray(VAO[1]);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		*/
+
 		glfwSwapBuffers(window);
 	}
 	//exit
 	glDeleteVertexArrays(1, &VAO);
-	//glDeleteVertexArrays(1, &VAO[1]);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glfwTerminate();
