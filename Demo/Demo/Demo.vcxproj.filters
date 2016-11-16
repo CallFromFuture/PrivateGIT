@@ -31,5 +31,8 @@
     <None Include="fss.frag">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="fss2.frag">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
