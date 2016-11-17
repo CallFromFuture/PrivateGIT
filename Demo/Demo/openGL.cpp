@@ -124,12 +124,11 @@ int main() {
 		-1.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
 		-1.0f, 0.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		0.0f, -1.0f, 0.0f
 	};
 	GLuint indices[] = {
 		0,1,2,
-		1,3,4
+		0,1,3
 	};
 	GLuint VAO,VBO,EBO;
 
@@ -148,6 +147,7 @@ int main() {
 	glEnableVertexAttribArray(0);
 	
 	glBindVertexArray(0);
+
 
 	//game loop
 	while (!glfwWindowShouldClose(window))
