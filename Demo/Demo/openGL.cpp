@@ -155,8 +155,8 @@ int main() {
 
 	glBindVertexArray(0);
 
-	//GLfloat timeValue = glfwGetTime(),greenValue = (sin(timeValue)/2)+0.5;
-	//GLint vertexColorLocation = glGetUniformLocation(shaderProgram2, "ourColor");
+	GLfloat timeValue = glfwGetTime(),xValue = sin(timeValue);
+	GLint vertexColorLocation = glGetUniformLocation(shader2.Program, "deltaX");
 
 	//game loop
 	while (!glfwWindowShouldClose(window))
@@ -172,9 +172,9 @@ int main() {
 
 		shader2.use();
 
-		//timeValue = glfwGetTime();
-		//greenValue = (sin(timeValue) / 2) + 0.5;
-		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		timeValue = glfwGetTime();
+		xValue = sin(timeValue);
+		glUniform1f(vertexColorLocation, xValue);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(GLuint)));
 		glEnableVertexAttribArray(0);
 
