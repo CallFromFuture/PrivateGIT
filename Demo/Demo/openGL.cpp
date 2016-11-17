@@ -11,7 +11,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	//create window
-	GLFWwindow * window = glfwCreateWindow(800, 600, "domo", nullptr, nullptr);
+	GLFWwindow * window = glfwCreateWindow(800, 600, "learnOpenGL", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	if (window == NULL) {
 		cout << "failed to create glfw window" << endl;
@@ -31,8 +31,9 @@ int main() {
 	glViewport(0, 0, 800, 600);
 	//set callback function
 	glfwSetKeyCallback(window, key_callback);
-
+	
 	//---------------------load start---------------------
+	/*
 	const GLchar *vertexShaderSource, *fragmentShaderSource,*fragmentShaderSource2;
 	GLint success;
 	ifstream in1, in2,in3;
@@ -118,13 +119,17 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(fragmentShader2);
+	*/
 	//---------------------load end---------------------
 
+	//new loader
+	Shader shader1("vss.vert", "fss.frag"),shader2("vss.vert", "fss2.frag");
+
 	GLfloat vertices[] = {
-		-1.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f
+		-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f,
+		0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 	GLuint indices[] = {
 		0,1,2,
@@ -143,11 +148,15 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)0);
 	glEnableVertexAttribArray(0);
-	
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)(3*sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
 	glBindVertexArray(0);
 
+	//GLfloat timeValue = glfwGetTime(),greenValue = (sin(timeValue)/2)+0.5;
+	//GLint vertexColorLocation = glGetUniformLocation(shaderProgram2, "ourColor");
 
 	//game loop
 	while (!glfwWindowShouldClose(window))
@@ -157,12 +166,16 @@ int main() {
 		glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+		shader1.use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
-		glUseProgram(shaderProgram2);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(unsigned int)));
+		shader2.use();
+
+		//timeValue = glfwGetTime();
+		//greenValue = (sin(timeValue) / 2) + 0.5;
+		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(GLuint)));
 		glEnableVertexAttribArray(0);
 
 		glBindVertexArray(0);
