@@ -32,108 +32,31 @@ int main() {
 	//set callback function
 	glfwSetKeyCallback(window, key_callback);
 	
-	//---------------------load start---------------------
-	/*
-	const GLchar *vertexShaderSource, *fragmentShaderSource,*fragmentShaderSource2;
-	GLint success;
-	ifstream in1, in2,in3;
-	//read vss.vert/fss.frag to vertexShaderSource/fragmentShaderSource
-	in1.open("vss.vert");
-	istreambuf_iterator<char> beg1(in1), end;
-	string vss(beg1, end);
-	vertexShaderSource = vss.c_str();
-	in1.close();
-
-	in2.open("fss.frag");
-	istreambuf_iterator<char> beg2(in2);
-	string fss(beg2, end);
-	fragmentShaderSource = fss.c_str();
-	in2.close();
-
-	in3.open("fss2.frag");
-	istreambuf_iterator<char> beg3(in3);
-	string fss2(beg3, end);
-	fragmentShaderSource2 = fss2.c_str();
-	in3.close();
-
-	GLuint vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	GLchar infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	GLuint fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	GLuint fragmentShader2;
-	fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
-	glCompileShader(fragmentShader2);
-
-	glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader2, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	GLuint shaderProgram,shaderProgram2;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	shaderProgram2 = glCreateProgram();
-	glAttachShader(shaderProgram2, vertexShader);
-	glAttachShader(shaderProgram2, fragmentShader2);
-	glLinkProgram(shaderProgram2);
-	glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &success);
 	
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::PROGRAM2::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	glDeleteShader(fragmentShader2);
-	*/
-	//---------------------load end---------------------
 
 	//new loader
-	Shader shader1("vss.vert", "fss.frag"),shader2("vss.vert", "fss2.frag");
-
+	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("vss.vert", "fss2.frag");
+	Texture textureManager= *Texture::Inst();
+	if (!textureManager.loadTexture("chest.png", 1)) {
+		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
+		system("PAUSE");
+		return -1;
+	}
+	if (!textureManager.loadTexture("3333.jpg", 0)) {
+		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
+		system("PAUSE");
+		return -1;
+	}
 	GLfloat vertices[] = {
-		-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f,
-		0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f
+		// Positions // Colors // Texture Coords
+		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top Right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom Left
+		-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // Top Left
 	};
 	GLuint indices[] = {
-		0,1,2,
-		0,1,3
+		0,1,3,
+		1,2,3
 	};
 	GLuint VAO,VBO,EBO;
 
@@ -148,15 +71,17 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);//vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)(3*sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));//colors
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));//texture coords
+	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
 
-	GLfloat timeValue = glfwGetTime(),xValue = sin(timeValue);
-	GLint vertexColorLocation = glGetUniformLocation(shader2.Program, "deltaX");
+	//GLfloat timeValue = glfwGetTime(),xValue = sin(timeValue);
+	//GLint vertexColorLocation = glGetUniformLocation(shader2.Program, "deltaX");
 
 	//game loop
 	while (!glfwWindowShouldClose(window))
@@ -166,17 +91,26 @@ int main() {
 		glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shader1.use();
+		glActiveTexture(GL_TEXTURE0);
+		textureManager.BindTexture(0);
+		glUniform1i(glGetUniformLocation(shader2.Program, "Texture1"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		textureManager.BindTexture(1);
+		glUniform1i(glGetUniformLocation(shader2.Program, "Texture2"), 1);
+
+
+		//shader1.use();
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		shader2.use();
 
-		timeValue = glfwGetTime();
-		xValue = sin(timeValue);
-		glUniform1f(vertexColorLocation, xValue);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(GLuint)));
-		glEnableVertexAttribArray(0);
+		//timeValue = glfwGetTime();
+		//xValue = sin(timeValue);
+		//glUniform1f(vertexColorLocation, xValue);
+		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)(3*sizeof(GLuint)));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glEnableVertexAttribArray(0);
 
 		glBindVertexArray(0);
 
@@ -187,6 +121,7 @@ int main() {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glfwTerminate();
+	//textureManager.~Texture();
 	return 0;
 }
 
