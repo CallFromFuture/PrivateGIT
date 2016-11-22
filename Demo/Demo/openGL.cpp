@@ -37,12 +37,12 @@ int main() {
 	//new loader
 	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("vss.vert", "fss2.frag");
 	Texture textureManager= *Texture::Inst();
-	if (!textureManager.loadTexture("chest.png", 1)) {
+	if (!textureManager.loadTexture("test1.jpg", 0, GL_BGR, GL_RGB, 0, 0)) {
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
 	}
-	if (!textureManager.loadTexture("3333.jpg", 0)) {
+	if (!textureManager.loadTexture("huaji.png", 1, GL_BGRA, GL_RGB, 0, 0)) {
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
@@ -83,6 +83,14 @@ int main() {
 	//GLfloat timeValue = glfwGetTime(),xValue = sin(timeValue);
 	//GLint vertexColorLocation = glGetUniformLocation(shader2.Program, "deltaX");
 
+	//glm::mat4 trans;
+	//trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+	GLuint transformLoc = glGetUniformLocation(shader2.Program, "transform"),
+		texture1Loc= glGetUniformLocation(shader2.Program, "Texture1"),
+		texture2Loc = glGetUniformLocation(shader2.Program, "Texture2");
+	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 	//game loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -93,10 +101,10 @@ int main() {
 
 		glActiveTexture(GL_TEXTURE0);
 		textureManager.BindTexture(0);
-		glUniform1i(glGetUniformLocation(shader2.Program, "Texture1"), 0);
+		glUniform1i(texture1Loc, 0);
 		glActiveTexture(GL_TEXTURE1);
 		textureManager.BindTexture(1);
-		glUniform1i(glGetUniformLocation(shader2.Program, "Texture2"), 1);
+		glUniform1i(texture2Loc, 1);
 
 
 		//shader1.use();
@@ -105,6 +113,11 @@ int main() {
 
 		shader2.use();
 
+
+		glm::mat4 trans;
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (GLfloat)glfwGetTime()*glm::radians(50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		//timeValue = glfwGetTime();
 		//xValue = sin(timeValue);
 		//glUniform1f(vertexColorLocation, xValue);
@@ -126,11 +139,37 @@ int main() {
 }
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode) {
+	/*
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	else if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
+	if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	else if (key == GLFW_KEY_F7 && action == GLFW_PRESS)
+	if (key == GLFW_KEY_F7 && action == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (key == GLFW_KEY_F6 && action == GLFW_PRESS) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}*/
+	if (action == GLFW_PRESS) {
+		switch (key) {
+		case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window, GL_TRUE); break;
+		case GLFW_KEY_F8: glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+		case GLFW_KEY_F7: glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+		case GLFW_KEY_F6:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			break;
+		case GLFW_KEY_F5:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			break;
+		default:return;
+		}
+
+	}
 }
 
