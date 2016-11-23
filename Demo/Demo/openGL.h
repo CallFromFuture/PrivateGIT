@@ -15,3 +15,6 @@
 using namespace std;
 #include "Shader.h"
 #include "Texture.h"
+
+const float screenWidth = 800, screenHeight = 600;
+
