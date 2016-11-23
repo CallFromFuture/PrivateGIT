@@ -80,13 +80,6 @@ int main() {
 
 	glBindVertexArray(0);
 
-	//GLfloat timeValue = glfwGetTime(),xValue = sin(timeValue);
-	//GLint vertexColorLocation = glGetUniformLocation(shader2.Program, "deltaX");
-
-	//glm::mat4 trans;
-	//trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
 	GLuint transformLoc = glGetUniformLocation(shader2.Program, "transform"),
 		texture1Loc= glGetUniformLocation(shader2.Program, "Texture1"),
 		texture2Loc = glGetUniformLocation(shader2.Program, "Texture2");
@@ -134,26 +127,10 @@ int main() {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glfwTerminate();
-	//textureManager.~Texture();
 	return 0;
 }
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode) {
-	/*
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (key == GLFW_KEY_F7 && action == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	if (key == GLFW_KEY_F6 && action == GLFW_PRESS) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
-	if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}*/
 	if (action == GLFW_PRESS) {
 		switch (key) {
 		case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window, GL_TRUE); break;
