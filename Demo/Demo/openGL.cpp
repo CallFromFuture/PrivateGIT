@@ -1,10 +1,13 @@
 #include "openGL.h"
 
-bool F6 = false, F7 = true, F8 = false;
+bool F6 = false, F7 = true, F8 = false,firstMouse = true;
 bool keys[1024];
-GLfloat deltaTime = 0.0f, lastFrame = 0.0f;  // 当前帧和上一帧之间的时间差
+GLfloat deltaTime = 0.0f, lastFrame = 0.0f; 
+GLfloat yaw = -90.0f, pitch = 0.0f;
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void do_movement();
+Camera camera = *Camera::Inst();
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -35,14 +38,34 @@ int main() {
 	//viewport
 	glViewport(0, 0, screenWidth, screenHeight);
 	//set callback function
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetKeyCallback(window, key_callback);
-	cout << "Debug:\r\nF6: LINEAR/NEAREST\r\nF7: Z-buffer on/off\r\nF8: Fill/LINE" << endl;
+
+	cout << "Debugging:" << endl;
+	cout << "F5: OutputDebugData" << endl;
+	cout << "F6: ReturnToOrigin" << endl;
+	cout << "F7: Z-buffer on/off" << endl;
+	cout << "F8: Fill/LINE" << endl;
+
 	glEnable(GL_DEPTH_TEST);
-
-
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//new loader
 	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("vss.vert", "fss2.frag");
 	Texture textureManager = *Texture::Inst();
+	/*
+	if (!textureManager.loadTexture("JPG.jpg", NUM, GL_BGR, GL_RGB, 0, 0)) {//JPG FORMAT
+		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
+		system("PAUSE");
+		return -1;
+	}
+	if (!textureManager.loadTexture("PNG.png", NUM, GL_BGRA, GL_RGB, 0, 0)) {//PNG FORMAT
+		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
+		system("PAUSE");
+		return -1;
+	}*/
 	if (!textureManager.loadTexture("test1.jpg", 0, GL_BGR, GL_RGB, 0, 0)) {
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
@@ -94,7 +117,18 @@ int main() {
 		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+/*
+		0.0f,0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,-1.0f,0.0f,0.0f,
+
+		
+		0.0f,1.0f,0.0f,0.0f,0.0f,
+		0.0f,-1.0f,0.0f,0.0f,0.0f,
+
+		1.0f,0.0f,-1.0f,0.0f,0.0f,
+		-1.0f,0.0f,-1.0f,0.0f,0.0f,
+		*/
 	};
 
 	glm::vec3 cubePositions[] = {
@@ -171,9 +205,10 @@ int main() {
 	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 	//mat init
+
 	glm::mat4 model, view, projection;
 	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 	projection = glm::perspective(glm::radians(45.0f), screenWidth / screenHeight, 0.1f, 100.0f);
 	//camera
 	/*
@@ -219,8 +254,11 @@ int main() {
 		//GLfloat camZ = cos(glfwGetTime()) * radius;
 		//glm::mat4 view;
 		//view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+		//view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		view = camera.getLookat();
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		//shader1.use();
@@ -238,15 +276,19 @@ int main() {
 		//timeValue = glfwGetTime();
 		//xValue = sin(timeValue);
 		//glUniform1f(vertexColorLocation, xValue);
+		//glDrawArrays(GL_LINES, 36, 2);
 		for (GLuint i = 0; i < 10; i++) {
 			glm::mat4 model;
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angle = 20.0f * i;
+			/*
 			if(i==0||i==2||i==6||i==9)
 				model = glm::rotate(model, angle+ (GLfloat)glfwGetTime() * glm::radians(50.f), glm::vec3(1.0f, 0.3f, 0.5f));
+				*/
+			model = glm::rotate(model, angle , glm::vec3(1.0f, 0.3f, 0.5f));
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			
 			glDrawArrays(GL_TRIANGLES, 0, 36);
+			
 		}
 		
 		//model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.f), glm::vec3(0.5f, 1.0f, 0.0f));
@@ -294,19 +336,24 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 				F7 = false;
 			} break;
 		case GLFW_KEY_F6:
-			if (F6 == false) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
-				F6 = true;
-			} else {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				F6 = false;
-			} break;
+			camera.setDefault();
+			//camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+			break;
+		case GLFW_KEY_F5:
+			camera.outputDebugInfo();
+			cout << deltaTime << "," << 1.0f / deltaTime << endl;
+			//camera.rotateView(glm::radians(0.0f), glm::radians(0.0f), glm::radians(20.0f));
+			//camera.rotateView(1.0f, 0.0f, 0.0f);
+			//camera.outputDebugInfo();
+			break;
 		case GLFW_KEY_W:
 		case GLFW_KEY_S:
 		case GLFW_KEY_A:
 		case GLFW_KEY_D:
+		case GLFW_KEY_Q:
+		case GLFW_KEY_E:
+		case GLFW_KEY_LEFT_SHIFT:
+		case GLFW_KEY_SPACE:
 			keys[key] = true; break;
 		default:return;
 		}
@@ -317,15 +364,37 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 	}
 }
 
+void mouse_callback(GLFWwindow * window, double xpos, double ypos)
+{
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	GLfloat xoffset = lastX - xpos;
+	GLfloat yoffset = lastY - ypos;
+		camera.processMouseMovement(yoffset, xoffset);
+	lastX = xpos;
+	lastY = ypos;
+}
+
 void do_movement() {
 	GLfloat cameraSpeed = 5.0f * deltaTime;
 	if (keys[GLFW_KEY_W])
-		cameraPos += cameraSpeed * cameraFront;
+		camera.processKeyboard(FORWARD, deltaTime);
 	if (keys[GLFW_KEY_S])
-		cameraPos -= cameraSpeed * cameraFront;
+		camera.processKeyboard(BACKWARD, deltaTime);
 	if (keys[GLFW_KEY_A])
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.processKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.processKeyboard(RIGHT, deltaTime);
+	if (keys[GLFW_KEY_Q])
+		camera.processKeyboard(LEFTROLLING, deltaTime);
+	if (keys[GLFW_KEY_E])
+		camera.processKeyboard(RIGHTROLLING, deltaTime);
+	if (keys[GLFW_KEY_LEFT_SHIFT])
+		camera.processKeyboard(DOWN, deltaTime);
+	if (keys[GLFW_KEY_SPACE])
+		camera.processKeyboard(UP, deltaTime);
 	
 }
