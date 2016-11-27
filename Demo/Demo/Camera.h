@@ -1,5 +1,7 @@
 #pragma once
+
 #include <glfw/glfw3.h>
+
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,7 +25,7 @@ enum Camera_Movement {
 class Camera
 {
 public:
-	GLfloat MovementSpeed = 3.0f;
+	GLfloat MovementSpeed = 6.0f;
 	GLfloat MouseSensitivity = 0.05f;
 	GLfloat RollingSpeed = 3.0f;
 	

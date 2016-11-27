@@ -1,8 +1,10 @@
 #pragma once
-#include <GL/glew.h>
+
 #include <freeImage/FreeImage.h>
 #include <map>
 #include <iostream>
+
+#include <GL/glew.h>
 class Texture
 {
 public:

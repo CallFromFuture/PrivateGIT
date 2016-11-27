@@ -19,6 +19,8 @@ void outputVec3(glm::vec3 vec);
 
 void scroll_callback(GLFWwindow * window, double xoffset, double yoffset);
 
+bool useResource(int id, char * type, char * filename);
+
 Camera camera = *Camera::Inst();
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -77,6 +79,12 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	CreateDirectory("res", NULL);
+	useResource(IDR_JPG1, "JPG", "res/test1.jpg");
+	useResource(IDR_JPG2, "JPG", "res/huaji.jpg");
+	useResource(IDR_SHADER1, "shader", "res/fss2.frag");
+	useResource(IDR_SHADER2, "shader", "res/vss.vert");
 	//vsync on/off
 	/*
 	typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
@@ -87,10 +95,10 @@ int main() {
 	wglSwapIntervalEXT(0);//off
 	*/
 
-	drawAxisInit();
+	//drawAxisInit();
 	cout << glGetString(GL_RENDERER);
 	//new loader
-	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("vss.vert", "fss2.frag");
+	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("res/vss.vert", "res/fss2.frag");
 	Texture textureManager = *Texture::Inst();
 	/*
 	if (!textureManager.loadTexture("JPG.jpg", NUM, GL_BGR, GL_RGB, 0, 0)) {//JPG FORMAT
@@ -103,16 +111,23 @@ int main() {
 		system("PAUSE");
 		return -1;
 	}*/
-	if (!textureManager.loadTexture("test1.jpg", 0, GL_BGR, GL_RGB, 0, 0)) {
+	if (!textureManager.loadTexture("res/test1.jpg", 0, GL_BGR, GL_RGB, 0, 0)) {
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
 	}
-	if (!textureManager.loadTexture("huaji.png", 1, GL_BGRA, GL_RGB, 0, 0)) {
+	if (!textureManager.loadTexture("res/huaji.jpg", 1, GL_BGR, GL_RGB, 0, 0)) {
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
 	}
+	
+	/*
+	if (!textureManager.loadTexture("res/huaji.png", 1, GL_BGRA, GL_RGB, 0, 0)) {
+		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
+		system("PAUSE");
+		return -1;
+	}*/
 	GLfloat vertices[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -511,4 +526,31 @@ inline void outputVec3(glm::vec3 vec) {
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.processMouseScoll(yoffset);
+}
+
+bool useResource(int id,char *type,char *filename) {
+	HRSRC hRsrc = FindResource(NULL, MAKEINTRESOURCE(id), TEXT(type));
+	if (NULL == hRsrc)
+		return FALSE;
+	DWORD dwSize = SizeofResource(NULL, hRsrc);
+	if (0 == dwSize)
+		return FALSE;
+	HGLOBAL hGlobal = LoadResource(NULL, hRsrc);
+	if (NULL == hGlobal)
+		return FALSE;
+	LPVOID pBuffer = LockResource(hGlobal);
+	if (NULL == pBuffer)
+		return FALSE;
+
+	BOOL bRt = FALSE;
+	FILE* fp = _tfopen(_T(filename), _T("wb"));
+	if (fp != NULL)
+	{
+		if (dwSize == fwrite(pBuffer, sizeof(char), dwSize, fp))
+			bRt = TRUE;
+		fclose(fp);
+	}
+
+	//FreeResource(hGlobal);
+	return bRt;
 }

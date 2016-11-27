@@ -2,7 +2,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+
 using namespace std;
+
 #include <GL/glew.h>
 class Shader
 {

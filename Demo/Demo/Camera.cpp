@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 using namespace glm;
+
 Camera *Camera::m_inst(0);
 
 
