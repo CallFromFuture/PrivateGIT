@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4244)
 #include <windows.h>
 
 
@@ -13,7 +14,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
 
 
@@ -21,5 +21,7 @@ using namespace std;
 #include "Shader.h"
 #include "Texture.h"
 #include "Camera.h"
-static const GLfloat screenWidth = 800, screenHeight = 600;
-static GLfloat lastX = screenWidth / 2.0, lastY = screenWidth / 2.0;
+static const int screenWidth = 800, screenHeight = 600;
+static GLdouble lastX = screenWidth / 2.0, lastY = screenWidth / 2.0;
+
+
