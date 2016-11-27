@@ -1,4 +1,6 @@
 #pragma once
+#include <windows.h>
+
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -11,7 +13,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
+
+
 using namespace std;
 #include "Shader.h"
 #include "Texture.h"

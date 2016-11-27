@@ -4,6 +4,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+
 enum Camera_Movement {
 	FORWARD,
 	BACKWARD,

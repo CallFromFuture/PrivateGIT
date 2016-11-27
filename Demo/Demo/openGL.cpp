@@ -1,12 +1,14 @@
 #include "openGL.h"
 
-bool F6 = false, F7 = true, F8 = false,firstMouse = true;
+bool F6 = false, F7 = true, F8 = false,firstMouse = true, calc = false;
 bool keys[1024];
 GLfloat deltaTime = 0.0f, lastFrame = 0.0f; 
 GLfloat yaw = -90.0f, pitch = 0.0f;
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void do_movement();
+void CalculateFrameRate();
+void outputString(int row, int column, string string);
 Camera camera = *Camera::Inst();
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -44,6 +46,7 @@ int main() {
 	glfwSetKeyCallback(window, key_callback);
 
 	cout << "Debugging:" << endl;
+	cout << "fps: " << endl;
 	cout << "F5: OutputDebugData" << endl;
 	cout << "F6: ReturnToOrigin" << endl;
 	cout << "F7: Z-buffer on/off" << endl;
@@ -52,6 +55,16 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//vsync on/off
+	/*
+	typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+	wglSwapIntervalEXT(1);//on
+	wglSwapIntervalEXT(0);//off
+	*/
+	cout << glGetString(GL_RENDERER);
 	//new loader
 	Shader /*shader1("vss.vert", "fss.frag"),*/shader2("vss.vert", "fss2.frag");
 	Texture textureManager = *Texture::Inst();
@@ -302,6 +315,10 @@ int main() {
 
 		glBindVertexArray(0);
 
+		//glfwSwapBuffers(window);
+		//glFinish();
+		//if(calc)
+			CalculateFrameRate();
 		glfwSwapBuffers(window);
 	}
 	//exit
@@ -341,7 +358,8 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 			break;
 		case GLFW_KEY_F5:
 			camera.outputDebugInfo();
-			cout << deltaTime << "," << 1.0f / deltaTime << endl;
+			calc = true;
+			//cout << deltaTime << "," << 1.0f / deltaTime << endl;
 			//camera.rotateView(glm::radians(0.0f), glm::radians(0.0f), glm::radians(20.0f));
 			//camera.rotateView(1.0f, 0.0f, 0.0f);
 			//camera.outputDebugInfo();
@@ -397,4 +415,39 @@ void do_movement() {
 	if (keys[GLFW_KEY_SPACE])
 		camera.processKeyboard(UP, deltaTime);
 	
+}
+
+void CalculateFrameRate()
+{
+	static float framesPerSecond = 0.0f;       // This will store our fps
+	static float lastTime = 0.0f;       // This will hold the time from the last frame
+	float currentTime = GetTickCount() * 0.001f;
+	++framesPerSecond;
+	if (currentTime - lastTime > 1.0f)
+	{
+		lastTime = currentTime;
+		ostringstream _buffer;
+		string a;
+		_buffer << framesPerSecond;
+		a = _buffer.str();
+		outputString(1, 5, a);
+		//cout << "\b\b\b\b\b\b\b" << "fps: " << framesPerSecond;
+		framesPerSecond = 0;
+		//calc = false;
+	}
+}
+
+void outputString(int row,int column, string string) {
+	HANDLE hStdout;
+	COORD cursorPos;
+	hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	cursorPos.X = column;
+	cursorPos.Y = row;
+	CONSOLE_SCREEN_BUFFER_INFO lastPos;
+	GetConsoleScreenBufferInfo(hStdout,&lastPos);
+	SetConsoleCursorPosition(hStdout, cursorPos);
+	cout << string;
+	cursorPos.X = lastPos.dwCursorPosition.X;
+	cursorPos.Y = lastPos.dwCursorPosition.Y;
+	SetConsoleCursorPosition(hStdout, cursorPos);
 }
