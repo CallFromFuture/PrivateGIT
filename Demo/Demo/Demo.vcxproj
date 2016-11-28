@@ -140,27 +140,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="fss.frag" />
-    <None Include="fss2.frag" />
-    <None Include="image_jp.bin" />
+    <None Include="res\lightFss.frag" />
+    <None Include="res\lightingFss.frag" />
     <None Include="res\fss2.frag" />
     <None Include="res\vss.vert" />
-    <None Include="shader1.bin" />
-    <None Include="vss.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="chest.png" />
-    <Image Include="chest2.png" />
-    <Image Include="huaji.png" />
-    <Image Include="res\22808674395233.jpg" />
-    <Image Include="res\bitmap2.bmp" />
     <Image Include="res\chest2.png" />
     <Image Include="res\huaji.png" />
     <Image Include="res\huaji2.jpg" />
     <Image Include="res\png2.png" />
     <Image Include="res\test1.jpg" />
-    <Image Include="test1.jpg" />
-    <Image Include="test2.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="test.rc" />
