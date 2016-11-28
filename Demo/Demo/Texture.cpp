@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+
 Texture *Texture::m_inst(0);
 
 Texture::Texture() {
@@ -72,8 +73,10 @@ bool Texture::unloadTexture(const char texID)
 bool Texture::BindTexture(const unsigned int texID)
 {
 	//if exist, bind it
-	if (m_texID.find(texID) != m_texID.end())
+	if (m_texID.find(texID) != m_texID.end()){
 		glBindTexture(GL_TEXTURE_2D, m_texID[texID]);
+		return true;
+	}
 	//otherwise, binding failed
 	else return false;
 }

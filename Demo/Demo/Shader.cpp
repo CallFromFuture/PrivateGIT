@@ -2,6 +2,8 @@
 
 
 
+
+
 Shader::Shader(const GLchar * vertexSourcePath, const GLchar * fragmentSourcePath) {
 	const GLchar *vertexShaderSource, *fragmentShaderSource;
 

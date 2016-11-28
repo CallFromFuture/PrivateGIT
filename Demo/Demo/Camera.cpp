@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 using namespace glm;
+
 Camera *Camera::m_inst(0);
 
 
@@ -36,6 +37,7 @@ void Camera::outputDebugInfo()
 
 	std::cout << "x1:" << x1 << ",y1:" << y1 << ",z1:" << z1 << std::endl;
 	//std::cout << radians(-89.0f) << std::endl;
+
 }
 
 /*
@@ -52,18 +54,18 @@ void Camera::setDefault()
 	x1 = 0.0f;
 	y1 = 0.0f;
 	z1 = 0.0f;
+	zoom = 45.0f;
+	updateVectors();
 }
 
-void Camera::processMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch)
+void Camera::processMouseMovement(GLdouble xoffset, GLdouble yoffset)
 {
-
 	xoffset *= MouseSensitivity;
 	yoffset *= MouseSensitivity;
-	//x1 += xoffset;
+
 	x1 += xoffset;
 	y1 += yoffset;
 	
-
 		if (x1 > 89.5f|| x1 < -89.5f){
 			x1 -= xoffset;
 			rotateViewB(0, radians(yoffset), 0);
@@ -75,9 +77,6 @@ void Camera::processMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean co
 			y1 += 360.0f;
 		else if (y1 > 180.0f)
 			y1 -= 360.0f;
-	//rotateView(radians(xoffset), radians(yoffset),0);
-	
-	//rotateViewA(radians(x1), radians(y1), 0);
 	updateVectors();
 }
 
@@ -101,9 +100,18 @@ void Camera::processKeyboard(Camera_Movement direction, GLfloat deltaTime)
 		rotateViewB(0, 0, radians(-RollingSpeed));
 	if (direction == LEFTROLLING)
 		rotateViewB(0, 0, radians(RollingSpeed));
-		
+	updateVectors();
 }
 
+void Camera::processMouseScoll(GLfloat yoffset) {
+	if (zoom >= 1.0f && zoom <= 45.0f)
+		zoom -= yoffset;
+	if (zoom <= 1.0f)
+		zoom = 1.0f;
+	if (zoom >= 45.0f)
+		zoom = 45.0f;
+	updateVectors();
+}
 void Camera::updateVectors()
 {
 	//float x = sqrt(1 - pow(view.z, 2));
@@ -116,7 +124,13 @@ void Camera::updateVectors()
 	//std::cout << "UP1"<<temp.x<<","<<temp.y<<","<<temp.z << std::endl;
 	//2:up = glm::normalize(glm::cross(right, view));
 
-
+	info.position = position;
+	info.view = view;
+	info.up = up;
+	info.x1 = x1;
+	info.y1 = y1;
+	info.z1 = z1;
+	info.zoom = zoom;
 	//std::cout << "UP2" << up.x << "," << up.y << "," << up.z << std::endl;
 }
 /*

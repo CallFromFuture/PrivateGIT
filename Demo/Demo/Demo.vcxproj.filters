@@ -41,6 +41,9 @@
     <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vss.vert">
@@ -52,6 +55,15 @@
     <None Include="fss2.frag">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="image_jp.bin">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="shader1.bin">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\fss2.frag" />
+    <None Include="res\vss.vert" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="chest.png">
@@ -69,5 +81,31 @@
     <Image Include="test2.jpg">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\huaji.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\test1.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\chest2.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\png2.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\22808674395233.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\huaji2.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="test.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
