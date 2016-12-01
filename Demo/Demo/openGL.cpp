@@ -118,29 +118,23 @@ int main() {
 		system("PAUSE");
 		return -1;
 	}*/
-	/*
-	if (!textureManager.loadTexture("res/test1.jpg", 0, GL_BGR, GL_RGB, 0, 0)) {
-		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
-		system("PAUSE");
-		return -1;
-	}*/
 	if (!textureManager.loadTexture("res/container2.png", 0, GL_BGRA, GL_RGB, 0, 0)) {//PNG FORMAT
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
 	}
-	if (!textureManager.loadTexture("res/huaji.jpg", 1, GL_BGR, GL_RGB, 0, 0)) {
+	
+	if (!textureManager.loadTexture("res/container2_specular.png", 1, GL_BGRA, GL_RGB, 0, 0)) {//PNG FORMAT
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
 	}
-	
-	/*
-	if (!textureManager.loadTexture("res/huaji.png", 1, GL_BGRA, GL_RGB, 0, 0)) {
+
+	if (!textureManager.loadTexture("res/matrix.jpg", 2, GL_BGR, GL_RGB, 0, 0)) {//JPG FORMAT
 		cout << "ERROR::TEXTURE::LAODER::LAODING_FAILED\n" << endl;
 		system("PAUSE");
 		return -1;
-	}*/
+	}
 	GLfloat vertices[] = {
 		// Positions           // Normals           // Texture Coords
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -294,12 +288,13 @@ int main() {
 		//matAmbientLoc = glGetUniformLocation(lightingShader.Program, "material.ambient"),//material
 		matDiffuseLoc = glGetUniformLocation(lightingShader.Program, "material.diffuse"),
 		matSpecularLoc = glGetUniformLocation(lightingShader.Program, "material.specular"),
+		matEmissionLoc = glGetUniformLocation(lightingShader.Program, "material.emission"),
 		matShineLoc = glGetUniformLocation(lightingShader.Program, "material.shininess"),
 		lightPosLoc = glGetUniformLocation(lightingShader.Program, "light.position"),
 		lightAmbientLoc = glGetUniformLocation(lightingShader.Program, "light.ambient"),//light
 		lightDiffuseLoc = glGetUniformLocation(lightingShader.Program, "light.diffuse"),
 		lightSpecularLoc = glGetUniformLocation(lightingShader.Program, "light.specular");
-
+		
 	lightShader.use();
 	GLint	lightModelLoc = glGetUniformLocation(lightShader.Program, "model"),
 		lightViewLoc = glGetUniformLocation(lightShader.Program, "view"),
@@ -366,9 +361,15 @@ int main() {
 		//glUniform3f(matDiffuseLoc, 0.50754f, 0.50754f, 0.50754f);
 		glActiveTexture(GL_TEXTURE0);
 		textureManager.BindTexture(0);
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "material.diffuse"), 0);
-		glUniform3f(matSpecularLoc, 0.5f, 0.5f, 0.5f);
-		glUniform1f(matShineLoc, 64.0f);
+		glUniform1i(matDiffuseLoc, 0);
+		glActiveTexture(GL_TEXTURE1);
+		textureManager.BindTexture(1);
+		glUniform1i(matSpecularLoc, 1);
+		glActiveTexture(GL_TEXTURE2);
+		textureManager.BindTexture(2);
+		glUniform1i(matEmissionLoc, 2);
+
+		glUniform1f(matShineLoc, 32.0f);
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);//light
 
 
