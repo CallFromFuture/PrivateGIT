@@ -290,8 +290,12 @@ int main() {
 		matSpecularLoc = glGetUniformLocation(lightingShader.Program, "material.specular"),
 		matEmissionLoc = glGetUniformLocation(lightingShader.Program, "material.emission"),
 		matShineLoc = glGetUniformLocation(lightingShader.Program, "material.shininess"),
-		lightPosLoc = glGetUniformLocation(lightingShader.Program, "light.position"),
+		dirLightDirectionLoc = glGetUniformLocation(lightingShader.Program, "dirLight.direction"),
+		pointLightConstantLoc = glGetUniformLocation(lightingShader.Program, "pointLight.constant"),
+		pointLightLinearLoc = glGetUniformLocation(lightingShader.Program, "pointLight.linear"),
+		pointLightQuadraticLoc = glGetUniformLocation(lightingShader.Program, "pointLight.quadratic"),
 		lightAmbientLoc = glGetUniformLocation(lightingShader.Program, "light.ambient"),//light
+		lightPosLoc = glGetUniformLocation(lightingShader.Program, "light.position"),
 		lightDiffuseLoc = glGetUniformLocation(lightingShader.Program, "light.diffuse"),
 		lightSpecularLoc = glGetUniformLocation(lightingShader.Program, "light.specular");
 		
@@ -371,7 +375,10 @@ int main() {
 
 		glUniform1f(matShineLoc, 32.0f);
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);//light
-
+		//glUniform3f(dirLightDirectionLoc, -0.2f, -1.0f, -0.3f);
+		glUniform1f(pointLightConstantLoc, 1.0f);
+		glUniform1f(pointLightLinearLoc, 0.09f);
+		glUniform1f(pointLightQuadraticLoc, 0.032f);
 
 		glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
 		glUniform3f(lightDiffuseLoc, 0.8f, 0.8f, 0.8f);
@@ -380,9 +387,22 @@ int main() {
 
 
 		glm::mat4 model;
+
+
+		for (GLuint i = 0; i < 10; i++)
+		{
+			model = glm::mat4();
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = 20.0f * i;
+			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+			glUniformMatrix4fv(lightingModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+		/*
 		model = glm::translate(model, cubePositions[0]);
 		glUniformMatrix4fv(lightingModelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		*/
 		glBindVertexArray(0);
 
 

@@ -243,3 +243,21 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/PixivScanner2/PixivScanner/temp
+/PixivScanner2/PixivScanner/output3.html
+/PixivScanner2/PixivScanner/output2.html
+/PixivScanner2/PixivScanner/output.html
+/PixivScanner2/PixivScanner/out3.out
+/PixivScanner2/PixivScanner/out2.out
+/PixivScanner2/PixivScanner/out.out
+/PixivScanner2/PixivScanner/new 1.html
+/PixivScanner2/PixivScanner/mapValueSorted.h
+/PixivScanner2/PixivScanner/cookie
+/PixivScanner2/PixivScanner/1.html
+/PixivScanner2/PixivScanner/%e5%a5%b3%e3%81%ae%e5%ad%90%20000.out
+/PixivScanner2/PixivScanner/%e5%a5%b3%e3%81%ae%e5%ad%90%20000.html
+/PixivScanner
+/MultithreadTest
+/TEST
+/PixivScanner.exe
+/PixivScanner2/PixivScanner/sortValue.cpp
