@@ -21,9 +21,7 @@ int main() {
 	readFile();
 	if (MODE != "SORT") {
 		initGet();
-		for (auto beg = errorUrlMap.begin(), end = errorUrlMap.end(); beg != end; beg++) {
-			downloadImage(beg->second, beg->first, 0);
-		}
+		
 		int n = 0;
 		for (auto beg = errorUrlVec.begin(), end = errorUrlVec.end(); beg != end; beg++) {
 			n++;
@@ -34,6 +32,9 @@ int main() {
 
 		printf("please wait until %d", 10000 + n);
 		system("pause");
+		for (auto beg = errorUrlMap.begin(), end = errorUrlMap.end(); beg != end; beg++) {
+			downloadImage(beg->second, beg->first, 0);
+		}
 		saveFile();
 	}
 	multimap<int, int, greater<int>> sortedInfo = sortInfo();
@@ -54,11 +55,14 @@ void outHTMLSORTED(multimap<int, int, greater<int>> sortedInfo) {
 
 	ofstream out(keywordA + ".html");
 	out << "<base target='_blank'><table border='1'>" << endl;
-	int i = 0;//12
+	int i = 0;
 	stringstream buffer1, buffer2;
 	for (auto beg = sortedInfo.begin(), end = sortedInfo.end(); beg != end; beg++) {
-		buffer1 << "<th>" << beg->first << "</th>" << endl;//TODO_Optional:add url to pixiv 
-		buffer2 << "<td><a href='http://i3.pixiv.net/c/1200x1200/img-master/img/" << globalUrl[beg->second] << "' download='" << beg->second << ".jpg'><img src='temp/" << beg->second << ".jpg'></img></a>" << endl;
+		string or = globalUrl[beg->second];
+		string href = or.replace(or .size() - 15, 15, "");
+		buffer1 << "<th>" << beg->first << "<a href='http://i4.pixiv.net/img-original/img/"<<href<<".jpg"<<"' download>JPG</a>/"<< "<a href='http://i4.pixiv.net/img-original/img/" << href << ".png" << "' download>PNG</a>" <<"</th>" << endl;//TODO_Optional:add url to pixiv 
+		//buffer2 << "<td><a href='http://i3.pixiv.net/c/1200x1200/img-master/img/" << globalUrl[beg->second] << "' download='" << beg->second << ".jpg'><img src='temp/" << beg->second << ".jpg'></img></a>" << endl;
+		buffer2 << "<td><img src='temp/" << beg->second << ".jpg'></img>" << endl;
 		if (i != 11) {
 			i++;
 		}
@@ -138,6 +142,8 @@ void initGet() {
 
 	if (numofImage != 0)
 		curlMultithreading(keywordA, ceil(float(numofImage) / 20.0f));
+	else if (numofImage > 20000)
+		curlMultithreading(keywordA, 1000);
 	else curlMultithreading(keywordA, 0);
 
 	system("pause");
@@ -204,7 +210,8 @@ bool curlEasyThread(const string sUrl, const string sProxy, unsigned int uiTimeo
 		if (!sProxy.empty())
 			curl_easy_setopt(curl, CURLOPT_PROXY, sProxy.c_str());
 		struct curl_slist *headers = NULL;
-		headers = curl_slist_append(headers, "Cookie:p_ab_id=0; login_ever=yes; manga_viewer_expanded=1; bookmark_tag_type=count; bookmark_tag_order=desc; a_type=0; is_sensei_service_user=1; b_type=1; __utmt=1; PHPSESSID=17351941_566621d47ac7250d071b9f58dee1aff6; device_token=c274a993f4a46162dcafbb0afbcaa19d; module_orders_mypage=%5B%7B%22name%22%3A%22recommended_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22spotlight%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22everyone_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22fanbox%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22sensei_courses%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22featured_tags%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22contests%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22following_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22mypixiv_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22booth_follow_items%22%2C%22visible%22%3Atrue%7D%5D; __utma=235335808.252990467.1480775136.1481887370.1481891032.12; __utmb=235335808.9.9.1481892394458; __utmc=235335808; __utmz=235335808.1481537845.4.2.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; __utmv=235335808.|2=login%20ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=17351941=1");
+		headers = curl_slist_append(headers, "Cookie:__utma=235335808.291152945.1488708965.1491560081.1491564793.8; __utmb=235335808.15.10.1491564793; __utmc=235335808; __utmv=235335808.|2=login%20ever=yes=1^3=plan=normal=1^4=p_ab_id_2=8=1^5=gender=male=1^6=user_id=17351941=1^9=p_ab_id=5=1^10=p_ab_id_2=8=1^11=illust_tag_placeholder=yes=1^12=fanbox_subscribe_button=blue=1^13=fanbox_fixed_otodoke_naiyou=yes=1^14=hide_upload_form=no=1^15=machine_translate_test=no=1; __utmz=235335808.1488708965.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _ga=GA1.2.291152945.1488708965; bookmark_tag_order=desc; bookmark_tag_type=count; bookToggle=cloud; module_orders_mypage=%5B%7B%22name%22%3A%22recommended_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22everyone_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22following_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22mypixiv_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22fanbox%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22featured_tags%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22contests%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22sensei_courses%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22spotlight%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22booth_follow_items%22%2C%22visible%22%3Atrue%7D%5D; p_ab_id=5; p_ab_id_2=8; PHPSESSID=17351941_c9adfe6e87cd403ab97ca0482733d60a; pixiv_embed=pix; login_ever=yes; a_type=0; is_sensei_service_user=1");
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		//curl_easy_setopt(curl, CURLOPT_COOKIE, COOKIE);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -395,8 +402,9 @@ void getImageInfo(GumboNode *root, string dubugHtml) {
 			return;
 		string id = gumbo_get_attribute(&node1->v.element.attributes, "href")->value;
 
-		string imageUrl = gumbo_get_attribute(&node3->v.element.attributes, "src")->value;
-
+		string imageUrl = gumbo_get_attribute(&node3->v.element.attributes, "data-src")->value;
+		imageUrl.replace(4, 1, "");
+		
 		int intid = stoi(id.replace(0, 41, ""));
 		thread t(downloadImage, imageUrl, intid, i);
 		t.detach();
@@ -404,7 +412,7 @@ void getImageInfo(GumboNode *root, string dubugHtml) {
 		//downloadImage(imageUrl, intid, i);
 		mut.lock();
 		info[intid] = mark;
-		globalUrl[intid] = imageUrl.replace(0, 45, "");
+		globalUrl[intid] = imageUrl.replace(0, 44, "");
 		mut.unlock();
 	}
 
